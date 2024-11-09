@@ -65,5 +65,18 @@ namespace ProjectQMSWpf
                 }
             }
         }
+
+        private void SignUp_Click(object sender, MouseButtonEventArgs e)
+        {
+            RegisterWindow newWindow = new RegisterWindow();
+            newWindow.Show();
+        }
+
+        private void ForgotPassword_Click(object sender, MouseButtonEventArgs e)
+        {
+            ForgotPasswordWindow forgotPasswordWindow = new ForgotPasswordWindow();
+            forgotPasswordWindow.ShowDialog();
+        }
+
     }
 }
