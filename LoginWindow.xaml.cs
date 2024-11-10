@@ -13,16 +13,16 @@ using Microsoft.Data.SqlClient;
 namespace ProjectQMSWpf
 {
     /// <summary>
-    /// Interaction logic for MainWindow.xaml
+    /// Interaction logic for LoginWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class LoginWindow : Window
     {
-        public MainWindow()
+        public LoginWindow()
         {
             InitializeComponent();
         }
 
-        private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void LoginWindow_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
             if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
             {
@@ -39,17 +39,17 @@ namespace ProjectQMSWpf
         {
             string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ProjectQMSWpf;Integrated Security=True;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
 
-            string enteredUsername = txtUsername.Text;
+            string enteredEmail = txtEmail.Text;
             string enteredPassword = txtPassword.Text;
 
-            string query = "SELECT COUNT(1) FROM Users WHERE Username = @username AND Password = @password";
+            string query = "SELECT COUNT(1) FROM Users WHERE Email = @Email AND Password = @Password";
 
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 using (SqlCommand command = new SqlCommand(query, connection))
                 {
-                    command.Parameters.AddWithValue("@username", enteredUsername);
-                    command.Parameters.AddWithValue("@password", enteredPassword);
+                    command.Parameters.AddWithValue("@Email", enteredEmail);
+                    command.Parameters.AddWithValue("@Password", enteredPassword);
 
                     connection.Open();
                     int result = (int)command.ExecuteScalar();
@@ -60,7 +60,7 @@ namespace ProjectQMSWpf
                     }
                     else
                     {
-                        MessageBox.Show("Invalid username or password.");
+                        MessageBox.Show("Invalid email or password.");
                     }
                 }
             }

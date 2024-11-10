@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        Title="Register" Height="550" Width="800" Background="White" WindowStyle="None">
+        Title="Register" Height="550" Width="800" Background="#86F0D3" WindowStyle="None" ResizeMode="NoResize">
 
     <Window.Resources>
         <!-- Gradient Brush for Join Us Button -->
@@ -41,20 +41,30 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
+
+        <!--TextHint (Placeholder Styling)-->
+        <Style x:Key="textHint" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Panel.ZIndex" Value="1" />
+            <Setter Property="Margin" Value="12 10 0 0" />
+            <Setter Property="Foreground" Value="#acb0af"/>
+        </Style>
+
     </Window.Resources>
 
     <!-- Main Grid with Two Columns -->
-    <Grid>
+    <Grid Background="#FFF">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*"/>
             <ColumnDefinition Width="3*"/>
         </Grid.ColumnDefinitions>
 
         <!-- Left Side (Image and Text) -->
-        <StackPanel Grid.Column="0" Background="Black">
-            <Image Source="D:\Munir\Sem-05\Enterprise Application Development\Project Wpf\ProjectQMSWpf\Images\RegisterationFormPic.png"
-                   Stretch="Fill" Opacity="0.8" Height="550" Width="390"/>
-        </StackPanel>
+        <Grid Grid.Column="0" Background="Transparent">
+            <Image Source="D:\Munir\Sem-05\Enterprise Application Development\Project Wpf\ProjectQMSWpf\Images\RegisterFormPic.png"
+                   Stretch="Fill" VerticalAlignment="Top" HorizontalAlignment="Center"/>
+        </Grid>
 
         <!-- Form Column -->
         <StackPanel Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Width="300">
@@ -63,104 +73,55 @@
 
             <!-- First Name Field with Placeholder -->
             <Grid Margin="0,10,0,0">
-                <TextBox Name="FirstNameTextBox" Padding="10" Height="40" BorderBrush="Gray" BorderThickness="1"/>
-                <TextBlock Text="First name" Foreground="Gray" Margin="15,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Text, ElementName=FirstNameTextBox}" Value="">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Text, ElementName=FirstNameTextBox}" Value="{x:Null}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Text, ElementName=FirstNameTextBox}" Value="{x:Static sys:String.Empty}">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                                <DataTrigger Binding="{Binding Text, ElementName=FirstNameTextBox}" Value=" ">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                <TextBox x:Name="FirstNameTextBox" Padding="10" Height="40" BorderBrush="Gray" 
+                         BorderThickness="1" TextChanged="TextBox_TextChanged"/>
+                <TextBlock x:Name="FirstNamePlaceholder" Text="First name" Style="{StaticResource textHint}" 
+                           MouseDown="Placeholder_MouseDown"/>
             </Grid>
+
             <!-- Last Name Field with Placeholder -->
             <Grid Margin="0,10,0,0">
-                <TextBox Name="LastNameTextBox" Padding="10" Height="40" BorderBrush="Gray" BorderThickness="1"/>
-                <TextBlock Text="Last name" Foreground="Gray" Margin="15,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Text, ElementName=LastNameTextBox}" Value="">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                <TextBox x:Name="LastNameTextBox" Padding="10" Height="40" BorderBrush="Gray" 
+                         BorderThickness="1" TextChanged="TextBox_TextChanged"/>
+                <TextBlock x:Name="LastNamePlaceholder" Text="Last name" Style="{StaticResource textHint}" 
+                           MouseDown="Placeholder_MouseDown"/>
             </Grid>
 
             <!-- Email Field with Placeholder -->
             <Grid Margin="0,10,0,0">
-                <TextBox Name="EmailTextBox" Padding="10" Height="40" BorderBrush="Gray" BorderThickness="1"/>
-                <TextBlock Text="Email" Foreground="Gray" Margin="15,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Text, ElementName=EmailTextBox}" Value="">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                <TextBox x:Name="EmailTextBox" Padding="10" Height="40" BorderBrush="Gray" 
+                         BorderThickness="1" TextChanged="TextBox_TextChanged"/>
+                <TextBlock x:Name="EmailPlaceholder" Text="Email Address" Style="{StaticResource textHint}" 
+                           MouseDown="Placeholder_MouseDown"/>
             </Grid>
 
             <!-- Password Field with Placeholder -->
             <Grid Margin="0,10,0,0">
-                <PasswordBox Name="PasswordTextBox" Padding="10" Height="40" BorderBrush="Gray" BorderThickness="1"/>
-                <TextBlock Text="Password" Foreground="Gray" Margin="15,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Password, ElementName=PasswordTextBox}" Value="">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                <PasswordBox x:Name="PasswordTextBox" Padding="10" Height="40" BorderBrush="Gray" 
+                             BorderThickness="1" PasswordChanged="PasswordBox_PasswordChanged"/>
+                <TextBlock x:Name="PasswordPlaceholder" Text="Password" Style="{StaticResource textHint}" 
+                           MouseDown="Placeholder_MouseDown"/>
             </Grid>
 
             <!-- Confirm Password Field with Placeholder -->
             <Grid Margin="0,10,0,0">
-                <PasswordBox Name="ConfirmPasswordTextBox" Padding="10" Height="40" BorderBrush="Gray" BorderThickness="1"/>
-                <TextBlock Text="Confirm Password" Foreground="Gray" Margin="15,0,0,0" VerticalAlignment="Center" IsHitTestVisible="False">
-                    <TextBlock.Style>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding Password, ElementName=ConfirmPasswordTextBox}" Value="">
-                                    <Setter Property="Visibility" Value="Visible"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </TextBlock.Style>
-                </TextBlock>
+                <PasswordBox x:Name="ConfirmPasswordTextBox" Padding="10" Height="40" BorderBrush="Gray" 
+                             BorderThickness="1" PasswordChanged="PasswordBox_PasswordChanged"/>
+                <TextBlock x:Name="ConfirmPasswordPlaceholder" Text="Confirm Password" Style="{StaticResource textHint}" 
+                           MouseDown="Placeholder_MouseDown"/>
             </Grid>
-            <!-- Role Selection Field -->
-            <StackPanel Orientation="Vertical" Margin="0,10,0,0">
-                <TextBlock Text="Select Your Role" FontSize="16" FontWeight="Bold" Margin="0,0,0,10" FontFamily="pack://application:,,,/ProjectQMSWpf;component/Fonts/GreatVibes-Regular.ttf#Great Vibes"/>
 
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5,0,0">
+            <!-- Role Selection Field -->
+            <TextBlock Text="Select Your Role" FontSize="16" FontWeight="Bold" Margin="0,10,0,0" 
+                       FontFamily="pack://application:,,,/ProjectQMSWpf;component/Fonts/GreatVibes-Regular.ttf#Great Vibes"/>
+            <StackPanel Orientation="Vertical" Margin="0,10,0,0" HorizontalAlignment="Center">
+                <!-- Horizontal Container for Radio Buttons -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center" 
+                            Margin="0,5,0,0" Width="200" Height="Auto">
+
                     <!-- Teacher Role -->
-                    <RadioButton Name="TeacherRadioButton" GroupName="RoleGroup" Margin="0,0,10,0" Cursor="Hand" Click="TeacherRadioButton_Click"
-                                 Style="{StaticResource RadioButtonStyle}">
+                    <RadioButton Name="TeacherRadioButton" GroupName="RoleGroup" Margin="10,0" Cursor="Hand" 
+                                 Click="TeacherRadioButton_Click" Style="{StaticResource RadioButtonStyle}">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="Account" Margin="0,0,5,0"/>
                             <TextBlock Text="Teacher" VerticalAlignment="Center"/>
@@ -168,7 +129,8 @@
                     </RadioButton>
 
                     <!-- Student Role -->
-                    <RadioButton Name="StudentRadioButton" GroupName="RoleGroup" Cursor="Hand" Click="StudentRadioButton_Click" Style="{StaticResource RadioButtonStyle}">
+                    <RadioButton Name="StudentRadioButton" GroupName="RoleGroup" Margin="10,0" Cursor="Hand" 
+                                 Click="StudentRadioButton_Click" Style="{StaticResource RadioButtonStyle}">
                         <StackPanel Orientation="Horizontal">
                             <iconPacks:PackIconMaterial Kind="School" Margin="0,0,5,0" Width="20"/>
                             <TextBlock Text="Student" VerticalAlignment="Center"/>
@@ -177,24 +139,13 @@
                 </StackPanel>
             </StackPanel>
 
-
-            <!-- Add similar code for Last Name, Email, and Password fields, following the same structure -->
-
-            <!-- Join Us Button -->
+            <!-- Register Button -->
             <Button Content="Register" Style="{StaticResource GradientButtonStyle}" Width="200" Height="40" Margin="0,20,0,0" Name="RegisterBtn" Click="RegisterBtn_Click"/>
 
-            <TextBlock Margin="0,10,0,0" Text="or continue with" FontFamily="pack://application:,,,/ProjectQMSWpf;component/Fonts/GreatVibes-Regular.ttf#Great Vibes" FontWeight="Light" FontSize="17" />
-
-            <Separator Margin="3"></Separator>
-
-            <StackPanel HorizontalAlignment="Center" Orientation="Horizontal" Margin="5">
-                <Button Margin="5" BorderThickness="0" BorderBrush="Transparent" Background="White"
-                        Cursor="Hand">
-                    <iconPacks:PackIconBootstrapIcons Kind="Google" Width="20" Height="20" Foreground="Black"/>
-                </Button>
-                <Button Margin="5" BorderThickness="0" BorderBrush="Transparent" Background="White" Cursor="Hand">
-                    <iconPacks:PackIconBootstrapIcons Kind="Facebook" Width="20" Height="20" Foreground="Black"/>
-                </Button>
+            <StackPanel Margin="0,10,0,0" HorizontalAlignment="Center">
+                <!-- Sign in Link -->
+                <TextBlock Text="Already a user? Sign in" Foreground="Blue" FontSize="12" Cursor="Hand" Name="SignIn"
+                           HorizontalAlignment="Center" MouseLeftButtonDown="SignIn_MouseLeftButtonDown"/>
             </StackPanel>
         </StackPanel>
     </Grid>

@@ -28,6 +28,9 @@ namespace ProjectQMSWpf
             // Send verification code email
             SendVerificationCodeEmail(email, verificationCode);
             StatusText.Text = "Verification code sent to your email.";
+            PasswordResetWindow passwordResetWindow = new PasswordResetWindow();
+            passwordResetWindow.Show();
+            this.Close();
         }
 
         // Method to generate a random 6-digit verification code

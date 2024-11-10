@@ -29,6 +29,8 @@ namespace ProjectQMSWpf
             {
                 ResetUserPassword(newPassword);
                 MessageBox.Show("Password reset successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                LoginWindow window = new LoginWindow();
+                window.Show();
                 this.Close();
             }
             else
