@@ -1,14 +1,8 @@
-﻿using System.Text;
+﻿using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using Microsoft.Data.SqlClient;
+using ProjectQMSWpf.Models; // Ensure this namespace is correct for your User model
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjectQMSWpf
 {
@@ -17,16 +11,20 @@ namespace ProjectQMSWpf
     /// </summary>
     public partial class LoginWindow : Window
     {
+        private readonly AppDbContext _dbContext;
+
         public LoginWindow()
         {
             InitializeComponent();
+            // Initialize the AppDbContext
+            _dbContext = new AppDbContext();
         }
 
-        private void LoginWindow_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void LoginWindow_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
-            if (e.ButtonState == System.Windows.Input.MouseButtonState.Pressed)
+            if (e.ButtonState == MouseButtonState.Pressed)
             {
-                this.DragMove(); 
+                this.DragMove();
             }
         }
 
@@ -37,38 +35,75 @@ namespace ProjectQMSWpf
 
         private void login_Click(object sender, RoutedEventArgs e)
         {
-            string connectionString = @"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ProjectQMSWpf;Integrated Security=True;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False";
+            // Fetch email and password from input fields
+            string enteredEmail = txtEmail.Text.Trim();
+            string enteredPassword = txtPassword.Text.Trim();
 
-            string enteredEmail = txtEmail.Text;
-            string enteredPassword = txtPassword.Text;
-
-            string query = "SELECT COUNT(1) FROM Users WHERE Email = @Email AND Password = @Password";
-
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            // Validate the inputs
+            if (string.IsNullOrWhiteSpace(enteredEmail) || string.IsNullOrWhiteSpace(enteredPassword))
             {
-                using (SqlCommand command = new SqlCommand(query, connection))
+                MessageBox.Show("Please enter both email and password.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                return;
+            }
+
+            try
+            {
+                // Query the database using LINQ with EF Core
+                var user = _dbContext.Users
+                    .FirstOrDefault(u => u.Email == enteredEmail);
+
+                // Check if user is found
+                if (user != null)
                 {
-                    command.Parameters.AddWithValue("@Email", enteredEmail);
-                    command.Parameters.AddWithValue("@Password", enteredPassword);
+                    // Log user data for debugging
+                    MessageBox.Show($"User found: {user.Email}", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                    connection.Open();
-                    int result = (int)command.ExecuteScalar();
-
-                    if (result == 1)
+                    // If passwords are stored hashed, use a password verification method
+                    if (user.Password == enteredPassword) // This is assuming plain-text passwords, update if you're hashing
                     {
-                        MessageBox.Show("Logged in successfully!");
+                        MessageBox.Show("Logged in successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        // Proceed to next window or application flow here
+                        if (user.Role == "Student")
+                        {
+                            StudentWindow studentWindow = new StudentWindow();
+                            this.Close();
+                            studentWindow.Show();
+                            
+                        }
+                        else if (user.Role == "Teacher")
+                        {
+                            TeacherWindow teacherWindow = new TeacherWindow();
+                            this.Close();
+                            teacherWindow.Show();
+                        }
+                        else
+                        {
+                            AdminWindow adminWindow = new AdminWindow();
+                            this.Close();
+                            adminWindow.Show();
+                        }
                     }
                     else
                     {
-                        MessageBox.Show("Invalid email or password.");
+                        MessageBox.Show("Invalid email or password.", "Login Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
                     }
                 }
+                else
+                {
+                    MessageBox.Show("User not found.", "Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for more details
+                MessageBox.Show($"An error occurred during login: {ex.Message}\n{ex.StackTrace}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void SignUp_Click(object sender, MouseButtonEventArgs e)
         {
             RegisterWindow newWindow = new RegisterWindow();
+            this.Close();
             newWindow.Show();
         }
 
@@ -77,6 +112,5 @@ namespace ProjectQMSWpf
             ForgotPasswordWindow forgotPasswordWindow = new ForgotPasswordWindow();
             forgotPasswordWindow.ShowDialog();
         }
-
     }
 }

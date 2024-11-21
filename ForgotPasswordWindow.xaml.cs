@@ -45,7 +45,7 @@ namespace ProjectQMSWpf
         {
             using (SqlConnection connection = new SqlConnection(@"Data Source=(localdb)\MSSQLLocalDB;Initial Catalog=ProjectQMSWpf;Integrated Security=True;Connect Timeout=30;Encrypt=True;TrustServerCertificate=False;ApplicationIntent=ReadWrite;MultiSubnetFailover=False"))
             {
-                string query = "UPDATE users SET ResetToken = @VerificationCode, TokenExpiry = @CodeExpiry WHERE Email = @Email";
+                string query = "UPDATE Users SET ResetToken = @VerificationCode, TokenExpiry = @CodeExpiry WHERE Email = @Email";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@VerificationCode", verificationCode);
                 command.Parameters.AddWithValue("@CodeExpiry", codeExpiry);

@@ -43,7 +43,7 @@ namespace ProjectQMSWpf
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string query = "SELECT ResetToken, TokenExpiry FROM users WHERE ResetToken = @ResetToken";
+                string query = "SELECT ResetToken, TokenExpiry FROM Users WHERE ResetToken = @ResetToken";
                 SqlCommand command = new SqlCommand(query, connection);
                 command.Parameters.AddWithValue("@ResetToken", enteredCode);
 
@@ -68,7 +68,7 @@ namespace ProjectQMSWpf
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
                 string hashedPassword = HashPassword(newPassword);
-                string updateQuery = "UPDATE users SET password = @Password, ResetToken = NULL, TokenExpiry = NULL WHERE ResetToken = @ResetToken";
+                string updateQuery = "UPDATE Users SET password = @Password, ResetToken = NULL, TokenExpiry = NULL WHERE ResetToken = @ResetToken";
                 SqlCommand updateCommand = new SqlCommand(updateQuery, connection);
                 updateCommand.Parameters.AddWithValue("@Password", hashedPassword);
                 updateCommand.Parameters.AddWithValue("@ResetToken", txtVerificationCode.Text);
