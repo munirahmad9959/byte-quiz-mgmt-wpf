@@ -1,21 +1,17 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using ProjectQMSWpf.Models;
 
-namespace ProjectQMSWpf.Models
+public class Question
 {
-    public class Question
-    {
+    public int QuestionID { get; set; }  // Primary key
+    public int QuizID { get; set; }     // Foreign key for Quiz
+    public Quiz Quiz { get; set; }      // Navigation property for Quiz
 
-        public int QuestionID { get; set; }  // Primary key (ensure this is present)
+    public int CategoryID { get; set; } // Foreign key for Category
+    public Category Category { get; set; } // Navigation property for Category
 
-        public int QuizID { get; set; }     // Foreign key
-        public Quiz Quiz { get; set; }      // Navigation property
+    public string QuestionText { get; set; }
+    public string Options { get; set; }  // JSON format
+    public string CorrectAnswer { get; set; }
 
-        public string QuestionText { get; set; }
-        public string Options { get; set; }  // JSON format
-        public string CorrectAnswer { get; set; }
-
-        // Navigation Property
-        public ICollection<Submission> Submissions { get; set; }
-    }
+    public ICollection<Submission> Submissions { get; set; }
 }

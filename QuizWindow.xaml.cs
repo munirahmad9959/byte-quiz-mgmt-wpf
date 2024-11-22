@@ -1,53 +1,92 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using Newtonsoft.Json;
+using ProjectQMSWpf.Models;
 
 namespace ProjectQMSWpf
 {
     public partial class QuizWindow : Window
     {
-        // Dummy quiz data
-        private List<Question> questions;
+        private int _categoryID;
+        private ObservableCollection<Question> _questions;
+        public string UserEmail { get; private set; }
+        private User CurrentUser; // Object to hold user details
 
-        public QuizWindow()
+        public QuizWindow(int categoryID, string useremail)
         {
             InitializeComponent();
-            LoadDummyData();
-            DisplayQuestions();
+            _categoryID = categoryID;
+            UserEmail = useremail;
+            LoadUserDetails();
+
+            LoadQuestions();
         }
 
-        private void LoadDummyData()
+        private void LoadUserDetails()
         {
-            questions = new List<Question>
+            try
             {
-                new Question
+                using (var context = new AppDbContext())
                 {
-                    QuestionText = "What is the capital of France?",
-                    Options = new List<string> { "Paris", "Berlin", "Madrid", "Rome" },
-                    CorrectOption = "Paris"
-                },
-                new Question
-                {
-                    QuestionText = "Which programming language is used for WPF?",
-                    Options = new List<string> { "C#", "Java", "Python", "JavaScript" },
-                    CorrectOption = "C#"
-                },
-                new Question
-                {
-                    QuestionText = "What is 2 + 2?",
-                    Options = new List<string> { "3", "4", "5", "6" },
-                    CorrectOption = "4"
+                    // Fetch the user details using the email
+                    CurrentUser = context.Users.FirstOrDefault(u => u.Email == UserEmail);
+
+                    if (CurrentUser != null)
+                    {
+                        // Display user information (for demonstration purposes)
+                        MessageBox.Show($"Welcome, {CurrentUser.FirstName} {CurrentUser.LastName}!", "User Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    else
+                    {
+                        MessageBox.Show("User not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                        this.Close(); // Close the window if the user is not found
+                    }
                 }
-            };
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading user details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+
+        private void LoadQuestions()
+        {
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    var questions = context.Questions
+                        .Where(q => q.CategoryID == _categoryID)
+                        .ToList();
+
+                    if (questions.Count == 0)
+                    {
+                        MessageBox.Show("No questions available for this category.", "Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        this.Close();
+                        return;
+                    }
+
+                    _questions = new ObservableCollection<Question>(questions);
+                }
+
+                DisplayQuestions();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading questions: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                this.Close();
+            }
         }
 
         private void DisplayQuestions()
         {
-            for (int i = 0; i < questions.Count; i++)
+            for (int i = 0; i < _questions.Count; i++)
             {
-                var question = questions[i];
+                var question = _questions[i];
 
                 // Create a StackPanel for each question
                 StackPanel questionPanel = new StackPanel
@@ -68,17 +107,20 @@ namespace ProjectQMSWpf
                 // Create a vertical StackPanel for options
                 StackPanel optionsPanel = new StackPanel
                 {
-                    Orientation = Orientation.Horizontal,
+                    Orientation = Orientation.Horizontal, // Horizontal alignment
                     Margin = new Thickness(10, 5, 0, 5)
                 };
 
-                foreach (var option in question.Options)
+                // Deserialize the options from JSON
+                var options = JsonConvert.DeserializeObject<List<Option>>(question.Options);
+
+                foreach (var option in options)
                 {
                     // Create a styled RadioButton
                     RadioButton radioButton = new RadioButton
                     {
                         GroupName = $"Question{i}",
-                        Style = (Style)FindResource("RadioButtonStyle"), // Apply the style
+                        Style = (Style)FindResource("RadioButtonStyle"), // Apply custom style
                     };
 
                     // Add the text as part of a horizontal StackPanel
@@ -88,7 +130,7 @@ namespace ProjectQMSWpf
                     };
                     TextBlock optionText = new TextBlock
                     {
-                        Text = option,
+                        Text = option.Text,
                         VerticalAlignment = VerticalAlignment.Center
                     };
 
@@ -109,17 +151,10 @@ namespace ProjectQMSWpf
         {
             int score = 0;
 
-            for (int i = 0; i < questions.Count; i++)
+            for (int i = 0; i < _questions.Count; i++)
             {
-                string groupName = $"Question{i}";
-
-                // Find the corresponding StackPanel for this question
                 var questionPanel = QuestionsPanel.Children.OfType<StackPanel>().ElementAt(i);
-
-                // Get the options panel (the second child of the question panel)
                 var optionsPanel = questionPanel.Children.OfType<StackPanel>().Last();
-
-                // Find the selected RadioButton
                 var selectedRadioButton = optionsPanel.Children.OfType<RadioButton>()
                     .FirstOrDefault(rb => rb.IsChecked == true);
 
@@ -127,23 +162,46 @@ namespace ProjectQMSWpf
                 var selectedOption = (selectedRadioButton?.Content as StackPanel)?
                     .Children.OfType<TextBlock>().FirstOrDefault()?.Text;
 
-                if (selectedOption == questions[i].CorrectOption)
+                if (selectedOption == _questions[i].CorrectAnswer)
                 {
                     score++;
                 }
             }
 
-            MessageBox.Show($"You scored {score} out of {questions.Count}!", "Quiz Result", MessageBoxButton.OK, MessageBoxImage.Information);
-            StudentWindow dashboard = new StudentWindow();
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    var quizResult = new StudentQuizResult
+                    {
+                        StudentID = CurrentUser.UserId, // Use the logged-in user's ID
+                        QuizID = _questions.First().QuizID,
+                        Score = score,
+                        ResultPDFPath = null // Optional: Generate a PDF if required
+                    };
+
+                    context.StudentQuizResults.Add(quizResult);
+                    context.SaveChanges();
+
+                    MessageBox.Show($"You scored {score} out of {_questions.Count}!", "Quiz Result", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save quiz result: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            // Navigate back to StudentWindow
+            StudentWindow dashboard = new StudentWindow(CurrentUser.Email); // Pass the current user's email
             dashboard.Show();
             this.Close();
         }
     }
 
-    public class Question
+    public class Option
     {
-        public string QuestionText { get; set; }
-        public List<string> Options { get; set; }
-        public string CorrectOption { get; set; }
+        public int OptionID { get; set; }
+        public string Text { get; set; }
     }
+
 }

@@ -45,7 +45,7 @@
                         </Border>
 
                         <!--Menu Titles-->
-                        <TextBlock Text="Munir Ahmad" Foreground="White" FontSize="22" FontWeight="SemiBold" DockPanel.Dock="Top" Margin="5 25 0 10" TextAlignment="Center"/>
+                        <TextBlock Name="username" Foreground="White" FontSize="22" FontWeight="SemiBold" DockPanel.Dock="Top" Margin="5 25 0 10" TextAlignment="Center"/>
                         <TextBlock Text="Lahore, Pakistan" Foreground="#D0BFFF" FontSize="14" FontWeight="SemiBold" DockPanel.Dock="Top" TextAlignment="Center"/>
 
                         <!--Menu Seprator-->
@@ -187,7 +187,7 @@
                         <DataGridTextColumn Header="Topic" Binding="{Binding Topic}" Width="*" />
 
                         <!-- Creator Name Column -->
-                        <DataGridTextColumn Header="Creator" Binding="{Binding Creator.FirstName}" Width="Auto" />
+                        <!--<DataGridTextColumn Header="Creator" Binding="{Binding Creator.FirstName}" Width="Auto" />-->
 
                         <!-- Obtained Marks Column -->
                         <DataGridTextColumn Header="Marks Obtained" Binding="{Binding ObtainedMarks}" Width="Auto" />

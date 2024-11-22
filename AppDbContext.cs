@@ -19,22 +19,24 @@ namespace ProjectQMSWpf
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Question>().HasNoKey();
-            // Configure User - StudentQuizResults relationship
+            modelBuilder.Entity<Question>()
+                .HasOne(q => q.Category)
+                .WithMany(c => c.Questions)
+                .HasForeignKey(q => q.CategoryID)
+                .OnDelete(DeleteBehavior.Restrict);
+
             modelBuilder.Entity<StudentQuizResult>()
                 .HasOne(r => r.Student)
                 .WithMany(u => u.QuizResults)
                 .HasForeignKey(r => r.StudentID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure Quiz - StudentQuizResults relationship
             modelBuilder.Entity<StudentQuizResult>()
                 .HasOne(r => r.Quiz)
                 .WithMany(q => q.QuizResults)
                 .HasForeignKey(r => r.QuizID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure Submissions relationships
             modelBuilder.Entity<Submission>()
                 .HasOne(s => s.Student)
                 .WithMany(u => u.Submissions)
@@ -53,7 +55,6 @@ namespace ProjectQMSWpf
                 .HasForeignKey(s => s.QuestionID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure Quiz - Category relationship
             modelBuilder.Entity<Quiz>()
                 .HasOne(q => q.Category)
                 .WithMany(c => c.Quizzes)

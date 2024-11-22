@@ -6,11 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ProjectQMSWpf.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class UpdatedSchema : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Categories",
+                columns: table => new
+                {
+                    CategoryID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Categories", x => x.CategoryID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
@@ -36,21 +49,19 @@ namespace ProjectQMSWpf.Migrations
                 {
                     QuizID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Topic = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatedBy = table.Column<int>(type: "int", nullable: false)
+                    CategoryID = table.Column<int>(type: "int", nullable: false),
+                    StartTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    EndTime = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    TotalMarks = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Quizzes", x => x.QuizID);
                     table.ForeignKey(
-                        name: "FK_Quizzes_Users_CreatedBy",
-                        column: x => x.CreatedBy,
-                        principalTable: "Users",
-                        principalColumn: "UserId",
+                        name: "FK_Quizzes_Categories_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryID",
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -61,6 +72,7 @@ namespace ProjectQMSWpf.Migrations
                     QuestionID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     QuizID = table.Column<int>(type: "int", nullable: false),
+                    CategoryID = table.Column<int>(type: "int", nullable: false),
                     QuestionText = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Options = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CorrectAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false)
@@ -68,6 +80,12 @@ namespace ProjectQMSWpf.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Questions", x => x.QuestionID);
+                    table.ForeignKey(
+                        name: "FK_Questions_Categories_CategoryID",
+                        column: x => x.CategoryID,
+                        principalTable: "Categories",
+                        principalColumn: "CategoryID",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Questions_Quizzes_QuizID",
                         column: x => x.QuizID,
@@ -85,7 +103,7 @@ namespace ProjectQMSWpf.Migrations
                     StudentID = table.Column<int>(type: "int", nullable: false),
                     QuizID = table.Column<int>(type: "int", nullable: false),
                     Score = table.Column<int>(type: "int", nullable: false),
-                    ResultPDFPath = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    ResultPDFPath = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -113,7 +131,7 @@ namespace ProjectQMSWpf.Migrations
                     StudentID = table.Column<int>(type: "int", nullable: false),
                     QuizID = table.Column<int>(type: "int", nullable: false),
                     QuestionID = table.Column<int>(type: "int", nullable: false),
-                    SelectedAnswer = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    SelectedAnswer = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -139,14 +157,19 @@ namespace ProjectQMSWpf.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Questions_CategoryID",
+                table: "Questions",
+                column: "CategoryID");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Questions_QuizID",
                 table: "Questions",
                 column: "QuizID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Quizzes_CreatedBy",
+                name: "IX_Quizzes_CategoryID",
                 table: "Quizzes",
-                column: "CreatedBy");
+                column: "CategoryID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_StudentQuizResults_QuizID",
@@ -187,10 +210,13 @@ namespace ProjectQMSWpf.Migrations
                 name: "Questions");
 
             migrationBuilder.DropTable(
+                name: "Users");
+
+            migrationBuilder.DropTable(
                 name: "Quizzes");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "Categories");
         }
     }
 }

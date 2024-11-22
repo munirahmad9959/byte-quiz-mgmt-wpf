@@ -4,7 +4,7 @@
              xmlns:metro="http://metro.mahapps.com/winfx/xaml/controls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
-             StartupUri="StudentWindow.xaml">
+             StartupUri="LoginWindow.xaml">
     <Application.Resources>
         <!-- MahApps Metro Styles and Resources -->
         <ResourceDictionary>

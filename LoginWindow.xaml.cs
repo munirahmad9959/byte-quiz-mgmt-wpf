@@ -65,7 +65,7 @@ namespace ProjectQMSWpf
                         // Proceed to next window or application flow here
                         if (user.Role == "Student")
                         {
-                            StudentWindow studentWindow = new StudentWindow();
+                            StudentWindow studentWindow = new StudentWindow(enteredEmail);
                             this.Close();
                             studentWindow.Show();
                             
