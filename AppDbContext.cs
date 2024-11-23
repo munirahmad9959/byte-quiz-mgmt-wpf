@@ -8,9 +8,8 @@ namespace ProjectQMSWpf
         public DbSet<User> Users { get; set; }
         public DbSet<Quiz> Quizzes { get; set; }
         public DbSet<Question> Questions { get; set; }
-        public DbSet<StudentQuizResult> StudentQuizResults { get; set; }
-        public DbSet<Submission> Submissions { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<Submission> Submissions { get; set; }  // Added DbSet for Submissions
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -19,47 +18,40 @@ namespace ProjectQMSWpf
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // Existing relationship between Question and Category
             modelBuilder.Entity<Question>()
                 .HasOne(q => q.Category)
                 .WithMany(c => c.Questions)
                 .HasForeignKey(q => q.CategoryID)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<StudentQuizResult>()
-                .HasOne(r => r.Student)
-                .WithMany(u => u.QuizResults)
-                .HasForeignKey(r => r.StudentID)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Relationship between Quiz and User
+            modelBuilder.Entity<Quiz>()
+                .HasOne(q => q.User)  // Quiz has one User
+                .WithMany(u => u.Quizzes)  // User can have many quizzes
+                .HasForeignKey(q => q.UserId)  // Foreign key in Quiz table
+                .OnDelete(DeleteBehavior.Cascade);  // Optional: Cascade delete quizzes when the user is deleted
 
-            modelBuilder.Entity<StudentQuizResult>()
-                .HasOne(r => r.Quiz)
-                .WithMany(q => q.QuizResults)
-                .HasForeignKey(r => r.QuizID)
-                .OnDelete(DeleteBehavior.Restrict);
-
+            // Relationship between Submission and User
             modelBuilder.Entity<Submission>()
-                .HasOne(s => s.Student)
+                .HasOne(s => s.User)
                 .WithMany(u => u.Submissions)
-                .HasForeignKey(s => s.StudentID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasForeignKey(s => s.UserId)
+                .OnDelete(DeleteBehavior.Cascade);  // Cascade delete submissions when the user is deleted
 
+            // Relationship between Submission and Quiz
             modelBuilder.Entity<Submission>()
                 .HasOne(s => s.Quiz)
-                .WithMany(q => q.Submissions)
+                .WithMany()  // A submission belongs to one quiz
                 .HasForeignKey(s => s.QuizID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Restrict);  // Optionally, restrict deletion of quizzes
 
+            // Relationship between Submission and Category
             modelBuilder.Entity<Submission>()
-                .HasOne(s => s.Question)
-                .WithMany(q => q.Submissions)
-                .HasForeignKey(s => s.QuestionID)
-                .OnDelete(DeleteBehavior.Restrict);
-
-            modelBuilder.Entity<Quiz>()
-                .HasOne(q => q.Category)
-                .WithMany(c => c.Quizzes)
-                .HasForeignKey(q => q.CategoryID)
-                .OnDelete(DeleteBehavior.Restrict);
+                .HasOne(s => s.Category)
+                .WithMany()
+                .HasForeignKey(s => s.CategoryID)
+                .OnDelete(DeleteBehavior.Restrict);  // Optionally, restrict deletion of categories
         }
     }
 }

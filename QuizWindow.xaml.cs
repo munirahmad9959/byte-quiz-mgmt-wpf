@@ -3,6 +3,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Threading;
 using Newtonsoft.Json;
 using ProjectQMSWpf.Models;
 
@@ -13,7 +15,9 @@ namespace ProjectQMSWpf
         private int _categoryID;
         private ObservableCollection<Question> _questions;
         public string UserEmail { get; private set; }
-        private User CurrentUser; // Object to hold user details
+        private User CurrentUser;
+        private DispatcherTimer _submissionTimer;
+        private TimeSpan _timeRemaining;
 
         public QuizWindow(int categoryID, string useremail)
         {
@@ -21,8 +25,42 @@ namespace ProjectQMSWpf
             _categoryID = categoryID;
             UserEmail = useremail;
             LoadUserDetails();
-
             LoadQuestions();
+
+            // Initialize and start the timer
+            InitializeTimer();
+        }
+
+        private void InitializeTimer()
+        {
+            _timeRemaining = TimeSpan.FromSeconds(30); // Set timer duration
+            TimerTextBlock.Text = $"Time Remaining: {_timeRemaining:mm\\:ss}";
+
+            _submissionTimer = new DispatcherTimer();
+            _submissionTimer.Interval = TimeSpan.FromSeconds(1); // Update every second
+            _submissionTimer.Tick += TimerTick;
+            _submissionTimer.Start();
+        }
+
+        private void TimerTick(object sender, EventArgs e)
+        {
+            _timeRemaining = _timeRemaining.Subtract(TimeSpan.FromSeconds(1));
+            TimerTextBlock.Text = $"Time Remaining: {_timeRemaining:mm\\:ss}";
+
+            if (_timeRemaining <= TimeSpan.Zero)
+            {
+                _submissionTimer.Stop();
+                MessageBox.Show("Time's up! Your quiz will be submitted automatically.", "Time Over", MessageBoxButton.OK, MessageBoxImage.Information);
+                SubmitQuiz();
+            }
+        }
+
+        private void TimerElapsed(object sender, EventArgs e)
+        {
+            // Stop the timer and submit the quiz automatically
+            _submissionTimer.Stop();
+            MessageBox.Show("Time's up! Your quiz will be submitted automatically.", "Time Over", MessageBoxButton.OK, MessageBoxImage.Information);
+            SubmitQuiz();
         }
 
         private void LoadUserDetails()
@@ -31,18 +69,17 @@ namespace ProjectQMSWpf
             {
                 using (var context = new AppDbContext())
                 {
-                    // Fetch the user details using the email
                     CurrentUser = context.Users.FirstOrDefault(u => u.Email == UserEmail);
 
                     if (CurrentUser != null)
                     {
-                        // Display user information (for demonstration purposes)
-                        MessageBox.Show($"Welcome, {CurrentUser.FirstName} {CurrentUser.LastName}!", "User Info", MessageBoxButton.OK, MessageBoxImage.Information);
+                        MessageBox.Show($"Welcome, {CurrentUser.FirstName} {CurrentUser.LastName}!",
+                                        "User Info", MessageBoxButton.OK, MessageBoxImage.Information);
                     }
                     else
                     {
                         MessageBox.Show("User not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                        this.Close(); // Close the window if the user is not found
+                        this.Close();
                     }
                 }
             }
@@ -51,7 +88,6 @@ namespace ProjectQMSWpf
                 MessageBox.Show($"Error loading user details: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
 
         private void LoadQuestions()
         {
@@ -88,68 +124,146 @@ namespace ProjectQMSWpf
             {
                 var question = _questions[i];
 
-                // Create a StackPanel for each question
-                StackPanel questionPanel = new StackPanel
-                {
-                    Margin = new Thickness(0, 0, 0, 20)
-                };
+                StackPanel questionPanel = new StackPanel { Margin = new Thickness(0, 0, 0, 20) };
 
-                // Add question text
                 TextBlock questionText = new TextBlock
                 {
                     Text = $"{i + 1}. {question.QuestionText}",
                     FontSize = 16,
                     FontWeight = FontWeights.Bold,
+                    Foreground = Brushes.AliceBlue,
                     Margin = new Thickness(0, 0, 0, 10)
                 };
                 questionPanel.Children.Add(questionText);
 
-                // Create a vertical StackPanel for options
                 StackPanel optionsPanel = new StackPanel
                 {
-                    Orientation = Orientation.Horizontal, // Horizontal alignment
+                    Orientation = Orientation.Vertical,
                     Margin = new Thickness(10, 5, 0, 5)
                 };
 
-                // Deserialize the options from JSON
-                var options = JsonConvert.DeserializeObject<List<Option>>(question.Options);
-
-                foreach (var option in options)
+                try
                 {
-                    // Create a styled RadioButton
-                    RadioButton radioButton = new RadioButton
-                    {
-                        GroupName = $"Question{i}",
-                        Style = (Style)FindResource("RadioButtonStyle"), // Apply custom style
-                    };
+                    var options = JsonConvert.DeserializeObject<List<Options>>(question.Options) ?? new List<Options>();
 
-                    // Add the text as part of a horizontal StackPanel
-                    StackPanel radioContent = new StackPanel
+                    foreach (var option in options)
                     {
-                        Orientation = Orientation.Horizontal
-                    };
-                    TextBlock optionText = new TextBlock
-                    {
-                        Text = option.Text,
-                        VerticalAlignment = VerticalAlignment.Center
-                    };
+                        RadioButton radioButton = new RadioButton
+                        {
+                            GroupName = $"Question{i}",
+                            Style = (Style)FindResource("RadioButtonStyle"),
+                        };
 
-                    radioContent.Children.Add(optionText);
-                    radioButton.Content = radioContent;
+                        StackPanel radioContent = new StackPanel { Orientation = Orientation.Horizontal };
+                        TextBlock optionText = new TextBlock { Text = option.Text, VerticalAlignment = VerticalAlignment.Center, Foreground = Brushes.AliceBlue };
 
-                    optionsPanel.Children.Add(radioButton);
+                        radioContent.Children.Add(optionText);
+                        radioButton.Content = radioContent;
+
+                        optionsPanel.Children.Add(radioButton);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error parsing options for question {i + 1}: {ex.Message}",
+                                    "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
 
                 questionPanel.Children.Add(optionsPanel);
-
-                // Add question panel to the main QuestionsPanel
                 QuestionsPanel.Children.Add(questionPanel);
             }
         }
 
         private void SubmitQuizButton_Click(object sender, RoutedEventArgs e)
         {
+            _submissionTimer.Stop(); // Stop the timer if the user submits manually
+            SubmitQuiz();
+        }
+
+        private void SubmitQuiz()
+        {
             int score = 0;
+
+            // Calculate the user's score
+            for (int i = 0; i < _questions.Count; i++)
+            {
+                var questionPanel = QuestionsPanel.Children.OfType<StackPanel>().ElementAt(i);
+                var optionsPanel = questionPanel.Children.OfType<StackPanel>().Last();
+                var selectedRadioButton = optionsPanel.Children.OfType<RadioButton>()
+                    .FirstOrDefault(rb => rb.IsChecked == true);
+
+                var selectedText = (selectedRadioButton?.Content as StackPanel)?
+                    .Children.OfType<TextBlock>().FirstOrDefault()?.Text;
+
+                if (selectedText != null)
+                {
+                    var options = JsonConvert.DeserializeObject<List<Options>>(_questions[i].Options);
+                    var selectedOption = options.FirstOrDefault(opt => opt.Text == selectedText);
+
+                    if (selectedOption != null)
+                    {
+                        bool isCorrect = selectedOption.Option == _questions[i].CorrectAnswer;
+                        if (isCorrect) score++;
+                    }
+                }
+            }
+
+            try
+            {
+                using (var context = new AppDbContext())
+                {
+                    // Save quiz result
+                    var quizResult = new Quiz
+                    {
+                        UserId = CurrentUser.UserId,
+                        CategoryName = context.Categories
+                            .Where(c => c.CategoryID == _categoryID)
+                            .Select(c => c.Name)
+                            .FirstOrDefault(),
+                        StartTime = DateTime.Now,
+                        EndTime = DateTime.Now,
+                        MarksObtained = score,
+                        TotalMarks = _questions.Count
+                    };
+
+                    context.Quizzes.Add(quizResult);
+                    context.SaveChanges();
+
+                    // Save submission details
+                    var submission = new Submission
+                    {
+                        UserId = CurrentUser.UserId,
+                        CategoryID = _categoryID,
+                        QuizID = quizResult.QuizID,
+                        MarksObtained = score,
+                        TotalMarks = _questions.Count,
+                        StartTime = quizResult.StartTime,
+                        EndTime = quizResult.EndTime,
+                        AnsweredQuestions = GenerateAnsweredQuestionsJson()
+                    };
+
+                    context.Submissions.Add(submission);
+                    context.SaveChanges();
+
+                    MessageBox.Show($"You scored {score} out of {_questions.Count}!",
+                                    "Quiz Result", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to save quiz and submission data: {ex.Message}",
+                                "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            // Navigate back to StudentWindow
+            StudentWindow dashboard = new StudentWindow(CurrentUser.Email);
+            dashboard.Show();
+            this.Close();
+        }
+
+        private string GenerateAnsweredQuestionsJson()
+        {
+            var answeredQuestions = new List<object>();
 
             for (int i = 0; i < _questions.Count; i++)
             {
@@ -158,50 +272,23 @@ namespace ProjectQMSWpf
                 var selectedRadioButton = optionsPanel.Children.OfType<RadioButton>()
                     .FirstOrDefault(rb => rb.IsChecked == true);
 
-                // Retrieve the text of the selected option
-                var selectedOption = (selectedRadioButton?.Content as StackPanel)?
+                var selectedText = (selectedRadioButton?.Content as StackPanel)?
                     .Children.OfType<TextBlock>().FirstOrDefault()?.Text;
 
-                if (selectedOption == _questions[i].CorrectAnswer)
+                answeredQuestions.Add(new
                 {
-                    score++;
-                }
+                    QuestionID = _questions[i].QuestionID,
+                    SelectedAnswer = selectedText ?? "Not Answered"
+                });
             }
 
-            try
-            {
-                using (var context = new AppDbContext())
-                {
-                    var quizResult = new StudentQuizResult
-                    {
-                        StudentID = CurrentUser.UserId, // Use the logged-in user's ID
-                        QuizID = _questions.First().QuizID,
-                        Score = score,
-                        ResultPDFPath = null // Optional: Generate a PDF if required
-                    };
-
-                    context.StudentQuizResults.Add(quizResult);
-                    context.SaveChanges();
-
-                    MessageBox.Show($"You scored {score} out of {_questions.Count}!", "Quiz Result", MessageBoxButton.OK, MessageBoxImage.Information);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Failed to save quiz result: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-
-            // Navigate back to StudentWindow
-            StudentWindow dashboard = new StudentWindow(CurrentUser.Email); // Pass the current user's email
-            dashboard.Show();
-            this.Close();
+            return JsonConvert.SerializeObject(answeredQuestions);
         }
     }
 
-    public class Option
+    public class Options
     {
-        public int OptionID { get; set; }
+        public string Option { get; set; }
         public string Text { get; set; }
     }
-
 }

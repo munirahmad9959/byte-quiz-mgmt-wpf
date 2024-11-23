@@ -62,7 +62,7 @@
 
         <!-- Left Side (Image and Text) -->
         <Grid Grid.Column="0" Background="Transparent">
-            <Image Source="D:\Munir\Sem-05\Enterprise Application Development\Project Wpf\ProjectQMSWpf\Images\RegisterFormPic.png"
+            <Image Source="Images\RegisterFormPic.png"
                    Stretch="Fill" VerticalAlignment="Top" HorizontalAlignment="Center"/>
         </Grid>
 

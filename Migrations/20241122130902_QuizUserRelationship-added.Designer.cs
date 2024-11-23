@@ -12,8 +12,8 @@ using ProjectQMSWpf;
 namespace ProjectQMSWpf.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241121163704_UpdatedSchema")]
-    partial class UpdatedSchema
+    [Migration("20241122130902_QuizUserRelationship-added")]
+    partial class QuizUserRelationshipadded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -50,11 +50,18 @@ namespace ProjectQMSWpf.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("QuizID"));
 
-                    b.Property<int>("CategoryID")
+                    b.Property<int?>("CategoryID")
                         .HasColumnType("int");
+
+                    b.Property<string>("CategoryName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime?>("EndTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("MarksObtained")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("StartTime")
                         .HasColumnType("datetime2");
@@ -62,71 +69,16 @@ namespace ProjectQMSWpf.Migrations
                     b.Property<int>("TotalMarks")
                         .HasColumnType("int");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("QuizID");
 
                     b.HasIndex("CategoryID");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Quizzes");
-                });
-
-            modelBuilder.Entity("ProjectQMSWpf.Models.StudentQuizResult", b =>
-                {
-                    b.Property<int>("ResultID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResultID"));
-
-                    b.Property<int>("QuizID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("ResultPDFPath")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Score")
-                        .HasColumnType("int");
-
-                    b.Property<int>("StudentID")
-                        .HasColumnType("int");
-
-                    b.HasKey("ResultID");
-
-                    b.HasIndex("QuizID");
-
-                    b.HasIndex("StudentID");
-
-                    b.ToTable("StudentQuizResults");
-                });
-
-            modelBuilder.Entity("ProjectQMSWpf.Models.Submission", b =>
-                {
-                    b.Property<int>("SubmissionID")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SubmissionID"));
-
-                    b.Property<int>("QuestionID")
-                        .HasColumnType("int");
-
-                    b.Property<int>("QuizID")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SelectedAnswer")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StudentID")
-                        .HasColumnType("int");
-
-                    b.HasKey("SubmissionID");
-
-                    b.HasIndex("QuestionID");
-
-                    b.HasIndex("QuizID");
-
-                    b.HasIndex("StudentID");
-
-                    b.ToTable("Submissions");
                 });
 
             modelBuilder.Entity("ProjectQMSWpf.Models.User", b =>
@@ -191,73 +143,26 @@ namespace ProjectQMSWpf.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("QuizID")
-                        .HasColumnType("int");
-
                     b.HasKey("QuestionID");
 
                     b.HasIndex("CategoryID");
-
-                    b.HasIndex("QuizID");
 
                     b.ToTable("Questions");
                 });
 
             modelBuilder.Entity("ProjectQMSWpf.Models.Quiz", b =>
                 {
-                    b.HasOne("ProjectQMSWpf.Models.Category", "Category")
+                    b.HasOne("ProjectQMSWpf.Models.Category", null)
                         .WithMany("Quizzes")
-                        .HasForeignKey("CategoryID")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("CategoryID");
+
+                    b.HasOne("ProjectQMSWpf.Models.User", "User")
+                        .WithMany("Quizzes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
-                });
-
-            modelBuilder.Entity("ProjectQMSWpf.Models.StudentQuizResult", b =>
-                {
-                    b.HasOne("ProjectQMSWpf.Models.Quiz", "Quiz")
-                        .WithMany("QuizResults")
-                        .HasForeignKey("QuizID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjectQMSWpf.Models.User", "Student")
-                        .WithMany("QuizResults")
-                        .HasForeignKey("StudentID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Quiz");
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("ProjectQMSWpf.Models.Submission", b =>
-                {
-                    b.HasOne("Question", "Question")
-                        .WithMany("Submissions")
-                        .HasForeignKey("QuestionID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjectQMSWpf.Models.Quiz", "Quiz")
-                        .WithMany("Submissions")
-                        .HasForeignKey("QuizID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("ProjectQMSWpf.Models.User", "Student")
-                        .WithMany("Submissions")
-                        .HasForeignKey("StudentID")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Question");
-
-                    b.Navigation("Quiz");
-
-                    b.Navigation("Student");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Question", b =>
@@ -268,15 +173,7 @@ namespace ProjectQMSWpf.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("ProjectQMSWpf.Models.Quiz", "Quiz")
-                        .WithMany("Questions")
-                        .HasForeignKey("QuizID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Category");
-
-                    b.Navigation("Quiz");
                 });
 
             modelBuilder.Entity("ProjectQMSWpf.Models.Category", b =>
@@ -286,25 +183,9 @@ namespace ProjectQMSWpf.Migrations
                     b.Navigation("Quizzes");
                 });
 
-            modelBuilder.Entity("ProjectQMSWpf.Models.Quiz", b =>
-                {
-                    b.Navigation("Questions");
-
-                    b.Navigation("QuizResults");
-
-                    b.Navigation("Submissions");
-                });
-
             modelBuilder.Entity("ProjectQMSWpf.Models.User", b =>
                 {
-                    b.Navigation("QuizResults");
-
-                    b.Navigation("Submissions");
-                });
-
-            modelBuilder.Entity("Question", b =>
-                {
-                    b.Navigation("Submissions");
+                    b.Navigation("Quizzes");
                 });
 #pragma warning restore 612, 618
         }

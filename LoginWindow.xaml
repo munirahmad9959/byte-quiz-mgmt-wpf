@@ -19,7 +19,7 @@
         <Border Height="390" VerticalAlignment="Top" CornerRadius="0 0 180 0" Background="#100E17">
             <StackPanel Orientation="Horizontal">
                 <StackPanel Width="350">
-                    <Image Source="D:\Munir\Sem-05\Enterprise Application Development\Project Wpf\ProjectQMSWpf\Images\ICON4801.png" Width="300" Height="300" VerticalAlignment="Top" Margin="30" Stretch="Fill" />
+                    <Image Source="Images\ICON4801.png" Width="300" Height="300" VerticalAlignment="Top" Margin="30" Stretch="Fill" />
                 </StackPanel>
 
                 <StackPanel Width="350">

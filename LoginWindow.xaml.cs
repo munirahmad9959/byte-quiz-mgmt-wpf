@@ -72,7 +72,7 @@ namespace ProjectQMSWpf
                         }
                         else if (user.Role == "Teacher")
                         {
-                            TeacherWindow teacherWindow = new TeacherWindow();
+                            TeacherWindow teacherWindow = new TeacherWindow(enteredEmail);
                             this.Close();
                             teacherWindow.Show();
                         }

@@ -90,7 +90,7 @@
 
                         </StackPanel>
 
-                        <Button Style="{StaticResource menuButton}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="15 0 15 20">
+                        <Button Style="{StaticResource menuButton}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="15 0 15 20" Name="Logout" Click="Logout_Click">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="Logout" Style="{StaticResource menuButtonIcon}"/>
                                 <TextBlock Text="Logout"/>
@@ -184,13 +184,13 @@
                         <DataGridTextColumn Header="Quiz ID" Binding="{Binding QuizID}" Width="Auto" />
 
                         <!-- Topic Column -->
-                        <DataGridTextColumn Header="Topic" Binding="{Binding Topic}" Width="*" />
+                        <DataGridTextColumn Header="Topic" Binding="{Binding CategoryName}" Width="*" />
 
                         <!-- Creator Name Column -->
                         <!--<DataGridTextColumn Header="Creator" Binding="{Binding Creator.FirstName}" Width="Auto" />-->
 
                         <!-- Obtained Marks Column -->
-                        <DataGridTextColumn Header="Marks Obtained" Binding="{Binding ObtainedMarks}" Width="Auto" />
+                        <DataGridTextColumn Header="Marks Obtained" Binding="{Binding MarksObtained}" Width="Auto" />
 
                         <!-- Total Marks Column -->
                         <DataGridTextColumn Header="Total Marks" Binding="{Binding TotalMarks}" Width="Auto" />
@@ -199,8 +199,14 @@
                         <DataGridTemplateColumn Header="Action" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button Content="Download PDF" Style="{StaticResource actionButtonStyle}" 
-                            CommandParameter="{Binding QuizID}" />
+                                    <Button Content="Download PDF" 
+        Style="{StaticResource actionButtonStyle}" 
+        Command="{Binding DownloadPdfCommand}"
+        CommandParameter="{Binding QuizID}"
+        Click="DownloadPdfButton_Click" />
+
+
+
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>

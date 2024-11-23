@@ -1,22 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ProjectQMSWpf.Models
 {
     public class Quiz
     {
-        public int QuizID { get; set; }
-        public int CategoryID { get; set; }
-        public Category Category { get; set; } // Navigation property
-
+        public int QuizID { get; set; } // Primary Key
+        public string CategoryName { get; set; } // Name of the Category
+        public int MarksObtained { get; set; }
+        public int TotalMarks { get; set; }
         public DateTime? StartTime { get; set; }
         public DateTime? EndTime { get; set; }
 
-        public int TotalMarks { get; set; }
-
-        // Relationships
-        public ICollection<StudentQuizResult> QuizResults { get; set; }
-        public ICollection<Submission> Submissions { get; set; }
-        public ICollection<Question> Questions { get; set; } // Added for clarity
+        // Foreign Key to User
+        public int UserId { get; set; }  // Reference to User
+        public User User { get; set; }    // Navigation property to User
     }
 }

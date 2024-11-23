@@ -6,12 +6,19 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UseWPF>true</UseWPF>
+    <ApplicationIcon>Images\QuizIcon.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <None Remove="Fonts\GreatVibes-Regular.ttf" />
     <None Remove="Images\ICON4801.png" />
-    <None Remove="Images\Pin on Cartoon.jpeg" />
+    <None Remove="Images\QuizIcon.ico" />
+    <None Remove="Images\QuizWindow.jpeg" />
+    <None Remove="Images\RegisterFormPic.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Images\QuizIcon.ico" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,14 +31,21 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="PDFsharp" Version="6.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <Resource Include="Fonts\GreatVibes-Regular.ttf" />
     <Resource Include="Images\ICON4801.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
-    <Resource Include="Images\Pin on Cartoon.jpeg">
+    <Resource Include="Images\QuizIcon.ico">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\QuizWindow.jpeg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Images\RegisterFormPic.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

@@ -11,14 +11,13 @@ namespace ProjectQMSWpf.Models
         public string Password { get; set; }
         public string Email { get; set; }
 
-        // Allow ResetToken and TokenExpiry to be null for regular registration
-        public string? ResetToken { get; set; }  // Nullable string
+        public string? ResetToken { get; set; } // Nullable string
         public DateTime? TokenExpiry { get; set; } // Nullable DateTime
 
         public string Role { get; set; }
 
-        // Navigation Properties
-        public ICollection<StudentQuizResult> QuizResults { get; set; }
-        public ICollection<Submission> Submissions { get; set; }
+        // Navigation property to quizzes and submissions
+        public ICollection<Quiz> Quizzes { get; set; }  // User can have many quizzes
+        public ICollection<Submission> Submissions { get; set; }  // User can have many submissions
     }
 }

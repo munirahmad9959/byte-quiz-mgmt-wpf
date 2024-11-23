@@ -3,10 +3,189 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:ProjectQMSWpf"
         mc:Ignorable="d"
-        Title="TeacherWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="TeacherWindow" Height="650" Width="1000" WindowStartupLocation="CenterScreen" WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="True" Background="Transparent">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
+
+    <Border Background="#eff2f7" CornerRadius="30" Name="Border" MouseDown="Border_MouseDown" MouseLeftButtonDown="Border_MouseLeftButtonDown">
+
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="200"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!--Left Menu-->
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!--Menu Icon-->
+                <Button Style="{StaticResource topButton}" HorizontalAlignment="Left" Margin="20 28 0 35">
+                    <iconPacks:PackIconMaterial Kind="Menu" Width="15" Height="15" />
+                </Button>
+
+                <Border Grid.Row="1" Background="#623ED0" CornerRadius="0 50 0 30">
+                    <DockPanel>
+                        <!--Menu Logo-->
+                        <Border Width="80" Height="80" Padding="3" Background="White" CornerRadius="100" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="20 -30 0 0">
+                            <Ellipse>
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="/Images/ICON4801.png"/>
+                                </Ellipse.Fill>
+                            </Ellipse>
+                        </Border>
+
+                        <!--Menu Titles-->
+                        <TextBlock Name="username" Foreground="White" FontSize="22" FontWeight="SemiBold" DockPanel.Dock="Top" Margin="5 25 0 10" TextAlignment="Center"/>
+                        <TextBlock Text="Lahore, Pakistan" Foreground="#D0BFFF" FontSize="14" FontWeight="SemiBold" DockPanel.Dock="Top" TextAlignment="Center"/>
+
+                        <!--Menu Seprator-->
+                        <Separator Margin="25" Background="#7E5FDC" DockPanel.Dock="Top" Height="0.8"/>
+
+                        <!--Menu Buttons-->
+                        <StackPanel DockPanel.Dock="Top" >
+                            <Button Style="{StaticResource menuButton}" Name="AddQuizzes" Click="AddQuizzes_Click" Cursor="Hand">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="Book" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Add Quizzes"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{StaticResource menuButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="CalendarClock" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Events"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{StaticResource menuButton}" Background="#7B5CD6" Foreground="White">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="LightbulbOn" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Quizzes"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{StaticResource menuButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="CashClock" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Payment Summary"/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button Style="{StaticResource menuButton}">
+                                <StackPanel Orientation="Horizontal">
+                                    <iconPacks:PackIconMaterial Kind="School" Style="{StaticResource menuButtonIcon}"/>
+                                    <TextBlock Text="Apply For Masters"/>
+                                </StackPanel>
+                            </Button>
+
+                        </StackPanel>
+
+                        <Button Style="{StaticResource menuButton}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="15 0 15 20"
+                                Name="Logout" Click="Logout_Click" Cursor="Hand">
+                            <StackPanel Orientation="Horizontal">
+                                <iconPacks:PackIconMaterial Kind="Logout" Style="{StaticResource menuButtonIcon}"/>
+                                <TextBlock Text="Logout"/>
+                            </StackPanel>
+                        </Button>
+
+                    </DockPanel>
+                </Border>
+            </Grid>
+            <!--Main Section-->
+            <Grid Grid.Column="1" Margin="30 20 20 20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <!--Search Textbox-->
+                <Grid Width="300" HorizontalAlignment="Left">
+                    <TextBlock Margin="20 0" VerticalAlignment="Center" Foreground="#B0B9C6" IsHitTestVisible="False"
+                           Panel.ZIndex="1" Text="Search here ..."
+                           Visibility="{Binding ElementName=textBoxSearch, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}" />
+
+                    <TextBox Name="textBoxSearch" Style="{StaticResource searchTextbox}"/>
+
+                    <iconPacks:PackIconMaterial Kind="Magnify" Width="15" Height="15" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="#B0B9C6" HorizontalAlignment="Right" />
+                </Grid>
+
+                <!--Top Buttons-->
+                <Button Style="{StaticResource topButton}" Margin="0 0 20 0" Background="#dcdcdc">
+                    <iconPacks:PackIconMaterial Kind="Cog"/>
+                </Button>
+
+                <Button Style="{StaticResource topButton}" Margin="0 0 55 0">
+                    <iconPacks:PackIconMaterial Kind="Bell"/>
+                </Button>
+
+                <!--Counter Title-->
+                <TextBlock Text="Student Quiz Records" Grid.Row="3" FontSize="22" FontWeight="SemiBold" Foreground="#121518" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 30 0 0"/>
+
+                <TextBlock Text="Filter by" Grid.Row="3" FontSize="13" FontWeight="SemiBold" Margin="0 30 215 0" Foreground="#121518" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+
+                <!--Filter Textbox-->
+                <Grid Width="200" HorizontalAlignment="Right" Grid.Row="3">
+                    <TextBlock Margin="15 30 0 0" VerticalAlignment="Center" Foreground="#B0B9C6" IsHitTestVisible="False"
+                           Panel.ZIndex="1" Text="Search by subject name  ..."
+                           Visibility="{Binding ElementName=textBoxFilter, Path=Text.IsEmpty, Converter={StaticResource BoolToVis}}" />
+
+                    <TextBox Name="textBoxFilter" Style="{StaticResource filterTextBox}" Margin="0 30 0 0 "/>
+                </Grid>
+                <!-- DataGrid for Quiz Records -->
+                <DataGrid Grid.Row="4" Margin="0 20 0 0" AutoGenerateColumns="False" CanUserAddRows="False" Name="QuizRecordsDataGrid"
+          ItemsSource="{Binding GridData}" HeadersVisibility="Column" RowHeaderWidth="0" RowStyle="{DynamicResource DataGridRowStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" CellStyle="{DynamicResource DataGridCellStyle1}" Style="{DynamicResource DataGridStyle1}" >
+                    <DataGrid.Columns>
+                        <!-- Quiz ID Column -->
+                        <DataGridTextColumn Header="Quiz ID" Binding="{Binding QuizID}" Width="Auto" />
+
+                        <!-- Topic Column -->
+                        <DataGridTextColumn Header="Topic" Binding="{Binding CategoryName}" Width="*" />
+
+                        <!-- Creator Name Column -->
+                        <DataGridTextColumn Header="User Name" Binding="{Binding UserName}" Width="Auto" />
+
+                        <!-- Obtained Marks Column -->
+                        <DataGridTextColumn Header="Marks Obtained" Binding="{Binding MarksObtained}" Width="Auto" />
+
+                        <!-- Total Marks Column -->
+                        <DataGridTextColumn Header="Total Marks" Binding="{Binding TotalMarks}" Width="Auto" />
+
+                        <!-- Download PDF Button Column -->
+                        <DataGridTemplateColumn Header="Action" Width="Auto">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button  
+        Style="{StaticResource actionButtonStyle}" 
+        Command="{Binding DownloadPdfCommand}"
+        CommandParameter="{Binding QuizID}"
+        Click="DownloadPdfButton_Click">
+                                        <iconPacks:PackIconMaterial Kind="Download" Width="15" Height="15" />
+                                    </Button>
+
+
+
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+
+            </Grid>
+        </Grid>
+    </Border>
 </Window>

@@ -3,10 +3,13 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
         xmlns:local="clr-namespace:ProjectQMSWpf"
         mc:Ignorable="d"
         Title="QuizWindow" Height="500" Width="800">
-
+    <Window.Background>
+        <ImageBrush ImageSource="Images/QuizWindow.jpeg" Opacity="0.3" />
+    </Window.Background>
     <Window.Resources>
         <Style x:Key="RadioButtonStyle" TargetType="RadioButton">
             <Setter Property="Background" Value="Transparent"/>
@@ -18,16 +21,26 @@
                 </Trigger>
             </Style.Triggers>
         </Style>
-
     </Window.Resources>
-    
+
     <Grid Margin="10">
+        <!-- Timer -->
+        <TextBlock x:Name="TimerTextBlock" 
+                   Text="00:30" 
+                   FontSize="16" FontWeight="Bold" 
+                   Foreground="Red" 
+                   HorizontalAlignment="Right" 
+                   VerticalAlignment="Top" 
+                   Margin="0,10,10,0">
+            <iconPacks:PackIconMaterial Kind="Timer" Margin="7,0,10,0"/>
+        </TextBlock>
+
         <!-- Header -->
-        <TextBlock Text="Quiz: Multiple Choice Questions" FontSize="24" FontWeight="Bold" 
-                   HorizontalAlignment="Center" Margin="0,10,0,20" />
+        <TextBlock Text="Quiz: Multiple Choice Questions" FontSize="24" FontWeight="Bold" Foreground="AliceBlue" 
+                   HorizontalAlignment="Center" Margin="0,50,0,20" />
 
         <!-- Scrollable Content -->
-        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,50,0,80">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" Margin="0,100,0,80">
             <StackPanel Name="QuestionsPanel" VerticalAlignment="Top">
                 <!-- Questions will be dynamically added here -->
             </StackPanel>
@@ -36,8 +49,6 @@
         <!-- Submit Button -->
         <Button Content="Submit Quiz" Name="SubmitQuizButton" Width="150" Height="40" 
                 VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,20"
-                Click="SubmitQuizButton_Click" />
-        
-        
+                Click="SubmitQuizButton_Click" Style="{StaticResource addButton}" />
     </Grid>
 </Window>
