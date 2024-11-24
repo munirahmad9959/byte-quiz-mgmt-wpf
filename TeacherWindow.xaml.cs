@@ -127,13 +127,28 @@ namespace ProjectQMSWpf
         {
             using (var document = new PdfDocument())
             {
-                var page = document.AddPage();
-                var gfx = XGraphics.FromPdfPage(page);
                 var fontTitle = new XFont("Verdana", 14, XFontStyleEx.Bold);
                 var fontRegular = new XFont("Verdana", 12, XFontStyleEx.Regular);
+                var fontGreen = new XFont("Verdana", 12, XFontStyleEx.Regular); // Same font but will use a green brush
 
-                double yPos = 40;
+                double pageWidthMargin = 40; // Left and right margins
+                double pageWidth = 595 - 2 * pageWidthMargin; // A4 width minus margins
+                double pageHeightThreshold = 750; // A4 height minus bottom margin
+                double margin = 40;
+                double yPos = margin;
 
+                void AddNewPage(ref PdfPage page, ref XGraphics gfx, ref double y)
+                {
+                    page = document.AddPage();
+                    gfx = XGraphics.FromPdfPage(page);
+                    y = margin;
+                }
+
+                PdfPage page = null;
+                XGraphics gfx = null;
+                AddNewPage(ref page, ref gfx, ref yPos); // Create the first page
+
+                // Title for the document
                 gfx.DrawString("Quiz Results", fontTitle, XBrushes.Black, new XRect(0, yPos, page.Width, page.Height), XStringFormats.TopCenter);
                 yPos += 60;
 
@@ -145,21 +160,40 @@ namespace ProjectQMSWpf
 
                         if (question != null)
                         {
-                            gfx.DrawString($"Question: {question.QuestionText}", fontTitle, XBrushes.Black, new XPoint(40, yPos));
-                            yPos += 20;
+                            // Check for page overflow before drawing question
+                            if (yPos + 100 > pageHeightThreshold)
+                            {
+                                AddNewPage(ref page, ref gfx, ref yPos);
+                            }
 
+                            // Draw the question text with word wrapping
+                            yPos = DrawTextWithWrapping(gfx, $"Question: {question.QuestionText}", fontTitle, margin, yPos, pageWidth);
+
+                            // Draw question options with word wrapping
                             List<OptionText> optionTexts = JsonConvert.DeserializeObject<List<OptionText>>(question.Options);
                             foreach (var option in optionTexts)
                             {
-                                gfx.DrawString($"{option.Option}. {option.Text}", fontRegular, XBrushes.Black, new XPoint(60, yPos));
-                                yPos += 15;
+                                yPos = DrawTextWithWrapping(gfx, $"{option.Option}. {option.Text}", fontRegular, margin + 20, yPos, pageWidth - 20);
+
+                                // Check for page overflow during option drawing
+                                if (yPos > pageHeightThreshold)
+                                {
+                                    AddNewPage(ref page, ref gfx, ref yPos);
+                                }
                             }
 
+                            // Draw selected answer
+                            yPos = DrawTextWithWrapping(gfx, $"Selected Answer: {obj.SelectedAnswer}", fontRegular, margin, yPos, pageWidth);
+
+                            // Draw correct answer in green
                             var correctOption = optionTexts.FirstOrDefault(ot => ot.Option == question.CorrectAnswer);
-                            gfx.DrawString($"Selected Answer: {obj.SelectedAnswer}", fontRegular, XBrushes.Black, new XPoint(40, yPos));
-                            yPos += 15;
-                            gfx.DrawString($"Correct Answer: {correctOption.Text}", fontRegular, XBrushes.Green, new XPoint(40, yPos));
-                            yPos += 30;
+                            yPos = DrawTextWithWrapping(gfx, $"Correct Answer: {correctOption.Text}", fontGreen, margin, yPos, pageWidth, XBrushes.Green);
+
+                            // Check for page overflow after answers
+                            if (yPos > pageHeightThreshold)
+                            {
+                                AddNewPage(ref page, ref gfx, ref yPos);
+                            }
                         }
                     }
                 }
@@ -174,6 +208,45 @@ namespace ProjectQMSWpf
                     MessageBox.Show($"Error saving PDF: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
+        }
+
+        private double DrawTextWithWrapping(XGraphics gfx, string text, XFont font, double x, double y, double maxWidth, XBrush brush = null)
+        {
+            if (brush == null)
+            {
+                brush = XBrushes.Black; // Default brush
+            }
+
+            var words = text.Split(' ');
+            string line = "";
+            double lineHeight = gfx.MeasureString("A", font).Height;
+
+            foreach (var word in words)
+            {
+                string testLine = line + (line.Length > 0 ? " " : "") + word;
+                double testWidth = gfx.MeasureString(testLine, font).Width;
+
+                if (testWidth > maxWidth)
+                {
+                    // Draw the current line and move to the next line
+                    gfx.DrawString(line, font, brush, new XPoint(x, y));
+                    line = word; // Start a new line with the current word
+                    y += lineHeight;
+                }
+                else
+                {
+                    line = testLine; // Continue adding words to the current line
+                }
+            }
+
+            // Draw the last line
+            if (line.Length > 0)
+            {
+                gfx.DrawString(line, font, brush, new XPoint(x, y));
+                y += lineHeight;
+            }
+
+            return y;
         }
 
         private void DownloadPdfButton_Click(object sender, RoutedEventArgs e)
@@ -238,6 +311,11 @@ namespace ProjectQMSWpf
             AddQuizzes window = new AddQuizzes(CurrentUser.Email);
             window.Show();
             this.Close();
+        }
+
+        private void CloseBtn_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Application.Current.Shutdown();
         }
     }
 }

@@ -343,5 +343,10 @@ namespace ProjectQMSWpf
             window.Show();
             this.Close();
         }
+
+        private void CloseBtn_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }

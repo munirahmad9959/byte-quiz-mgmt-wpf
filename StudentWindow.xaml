@@ -21,6 +21,8 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
+            <iconPacks:PackIconMaterial Kind="CloseCircleOutline" Width="35" Height="35" Foreground="DarkGray" HorizontalAlignment="Right" Margin="0 20 20 0" Cursor="Hand" Grid.Column="2" Name="CloseBtn" MouseLeftButtonDown="CloseBtn_MouseLeftButtonDown"/>
+
             <!--Left Menu-->
             <Grid>
                 <Grid.RowDefinitions>
@@ -90,7 +92,7 @@
 
                         </StackPanel>
 
-                        <Button Style="{StaticResource menuButton}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="15 0 15 20" Name="Logout" Click="Logout_Click">
+                        <Button Style="{StaticResource menuButton}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" Margin="15 0 15 20" Name="Logout" Click="Logout_Click" Cursor="Hand">
                             <StackPanel Orientation="Horizontal">
                                 <iconPacks:PackIconMaterial Kind="Logout" Style="{StaticResource menuButtonIcon}"/>
                                 <TextBlock Text="Logout"/>
@@ -122,15 +124,6 @@
 
                     <iconPacks:PackIconMaterial Kind="Magnify" Width="15" Height="15" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="#B0B9C6" HorizontalAlignment="Right" />
                 </Grid>
-
-                <!--Top Buttons-->
-                <Button Style="{StaticResource topButton}" Margin="0 0 20 0" Background="#dcdcdc">
-                    <iconPacks:PackIconMaterial Kind="Cog"/>
-                </Button>
-
-                <Button Style="{StaticResource topButton}" Margin="0 0 55 0">
-                    <iconPacks:PackIconMaterial Kind="Bell"/>
-                </Button>
 
                 <!-- Dropdown Section -->
                 <TextBlock Text="Select Quiz to Take" Grid.Row="1" FontSize="22" FontWeight="SemiBold" Margin="0 20 0 5" Foreground="#121518" HorizontalAlignment="Left"/>
@@ -185,9 +178,6 @@
 
                         <!-- Topic Column -->
                         <DataGridTextColumn Header="Topic" Binding="{Binding CategoryName}" Width="*" />
-
-                        <!-- Creator Name Column -->
-                        <!--<DataGridTextColumn Header="Creator" Binding="{Binding Creator.FirstName}" Width="Auto" />-->
 
                         <!-- Obtained Marks Column -->
                         <DataGridTextColumn Header="Marks Obtained" Binding="{Binding MarksObtained}" Width="Auto" />

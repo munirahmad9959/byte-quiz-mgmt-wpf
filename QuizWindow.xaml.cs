@@ -284,6 +284,11 @@ namespace ProjectQMSWpf
 
             return JsonConvert.SerializeObject(answeredQuestions);
         }
+
+        //private void CloseBtn_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        //{
+        //    Application.Current.Shutdown();
+        //}
     }
 
     public class Options

@@ -201,13 +201,6 @@ namespace ProjectQMSWpf
             }
         }
 
-        private void BackBtn_Click(object sender, RoutedEventArgs e)
-        {
-            TeacherWindow window = new TeacherWindow(CurrentUser.Email);
-            window.Show();
-            this.Close();
-        }
-
         private void EditQuiz_Click(object sender, RoutedEventArgs e)
         {
             // Validate input fields
@@ -375,6 +368,13 @@ namespace ProjectQMSWpf
         {
             public string Option { get; set; }
             public string Text { get; set; }
+        }
+
+        private void BackBtn_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            TeacherWindow window = new TeacherWindow(CurrentUser.Email);
+            window.Show();
+            this.Close();
         }
     }
 }

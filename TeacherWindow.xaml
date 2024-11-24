@@ -15,11 +15,14 @@
 
     <Border Background="#eff2f7" CornerRadius="30" Name="Border" MouseDown="Border_MouseDown" MouseLeftButtonDown="Border_MouseLeftButtonDown">
 
+
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="200"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
+
+                <iconPacks:PackIconMaterial Kind="CloseCircleOutline" Width="35" Height="35" Foreground="DarkGray" HorizontalAlignment="Right" Margin="0 20 20 0" Cursor="Hand" Grid.Column="2" Name="CloseBtn" MouseLeftButtonDown="CloseBtn_MouseLeftButtonDown"/>
 
             <!--Left Menu-->
             <Grid>
@@ -124,15 +127,6 @@
                     <iconPacks:PackIconMaterial Kind="Magnify" Width="15" Height="15" VerticalAlignment="Center" Margin="0 0 15 0" Foreground="#B0B9C6" HorizontalAlignment="Right" />
                 </Grid>
 
-                <!--Top Buttons-->
-                <Button Style="{StaticResource topButton}" Margin="0 0 20 0" Background="#dcdcdc">
-                    <iconPacks:PackIconMaterial Kind="Cog"/>
-                </Button>
-
-                <Button Style="{StaticResource topButton}" Margin="0 0 55 0">
-                    <iconPacks:PackIconMaterial Kind="Bell"/>
-                </Button>
-
                 <!--Counter Title-->
                 <TextBlock Text="Student Quiz Records" Grid.Row="3" FontSize="22" FontWeight="SemiBold" Foreground="#121518" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="0 30 0 0"/>
 
@@ -147,8 +141,14 @@
                     <TextBox Name="textBoxFilter" Style="{StaticResource filterTextBox}" Margin="0 30 0 0 "/>
                 </Grid>
                 <!-- DataGrid for Quiz Records -->
-                <DataGrid Grid.Row="4" Margin="0 20 0 0" AutoGenerateColumns="False" CanUserAddRows="False" Name="QuizRecordsDataGrid"
-          ItemsSource="{Binding GridData}" HeadersVisibility="Column" RowHeaderWidth="0" RowStyle="{DynamicResource DataGridRowStyle1}" ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" CellStyle="{DynamicResource DataGridCellStyle1}" Style="{DynamicResource DataGridStyle1}" >
+                <!-- DataGrid for Quiz Records -->
+                <DataGrid Grid.Row="5" Margin="0 20 0 0" AutoGenerateColumns="False" CanUserAddRows="False"
+          Name="QuizRecordsDataGrid" ItemsSource="{Binding GridData}" HeadersVisibility="Column"
+          RowHeaderWidth="0" RowStyle="{DynamicResource DataGridRowStyle1}" 
+          ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+          CellStyle="{DynamicResource DataGridCellStyle1}" Style="{DynamicResource DataGridStyle1}" 
+          ScrollViewer.HorizontalScrollBarVisibility="Auto" 
+          ScrollViewer.VerticalScrollBarVisibility="Auto">
                     <DataGrid.Columns>
                         <!-- Quiz ID Column -->
                         <DataGridTextColumn Header="Quiz ID" Binding="{Binding QuizID}" Width="Auto" />
@@ -169,16 +169,12 @@
                         <DataGridTemplateColumn Header="Action" Width="Auto">
                             <DataGridTemplateColumn.CellTemplate>
                                 <DataTemplate>
-                                    <Button  
-        Style="{StaticResource actionButtonStyle}" 
-        Command="{Binding DownloadPdfCommand}"
-        CommandParameter="{Binding QuizID}"
-        Click="DownloadPdfButton_Click">
-                                        <iconPacks:PackIconMaterial Kind="Download" Width="15" Height="15" />
+                                    <Button Style="{StaticResource actionButtonStyle}" 
+                            Command="{Binding DownloadPdfCommand}" 
+                            CommandParameter="{Binding QuizID}" 
+                            Click="DownloadPdfButton_Click">
+                                        <iconPacks:PackIconMaterial Kind="CloudDownloadOutline" Width="15" Height="15" />
                                     </Button>
-
-
-
                                 </DataTemplate>
                             </DataGridTemplateColumn.CellTemplate>
                         </DataGridTemplateColumn>
