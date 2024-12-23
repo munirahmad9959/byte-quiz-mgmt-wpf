@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
-        Title="Register" Height="550" Width="800" Background="#86F0D3" WindowStyle="None" ResizeMode="NoResize">
+        Title="Register" Height="550" Width="800" Background="#86F0D3" WindowStyle="None" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" MouseLeftButtonDown="Window_MouseLeftButtonDown">
 
     <Window.Resources>
         <!-- Gradient Brush for Join Us Button -->
@@ -144,8 +144,9 @@
 
             <StackPanel Margin="0,10,0,0" HorizontalAlignment="Center">
                 <!-- Sign in Link -->
-                <TextBlock Text="Already a user? Sign in" Foreground="Blue" FontSize="12" Cursor="Hand" Name="SignIn"
-                           HorizontalAlignment="Center" MouseLeftButtonDown="SignIn_MouseLeftButtonDown"/>
+
+                <TextBlock Text="Already a user? Sign in" Foreground="Blue" FontSize="12" Cursor="Hand" Name="SignIn" 
+           HorizontalAlignment="Center" MouseLeftButtonDown="SignIn_MouseLeftButtonDown"/>
             </StackPanel>
         </StackPanel>
     </Grid>

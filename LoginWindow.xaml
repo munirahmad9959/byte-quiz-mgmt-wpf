@@ -5,7 +5,7 @@
            xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls" x:Class="ProjectQMSWpf.LoginWindow"
  
         Title="LoginWindow" Height="450" Width="800" WindowStyle="None" ResizeMode="NoResize"
-    MouseLeftButtonDown="LoginWindow_MouseLeftButtonDown">
+    MouseLeftButtonDown="LoginWindow_MouseLeftButtonDown" WindowStartupLocation="CenterScreen">
 
 
     <Grid>
@@ -30,7 +30,7 @@
                         <!--Stackpanel for username TextBox-->
                         <StackPanel Orientation="Horizontal" Margin="10">
                             <iconPacks:PackIconMaterialDesign Kind="Person" Width="35" Foreground="White"/>
-                            <TextBox Name="txtEmail" Margin="10 0" Width="200" BorderBrush="White" CaretBrush="#FFD94448" SelectionBrush="#FFD94448" >
+                            <TextBox Name="txtEmail" Margin="10 0" Width="200" Height="20" BorderBrush="White" CaretBrush="#FFD94448" SelectionBrush="#FFD94448" >
                                 <TextBox.Style>
                                     <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                         <Style.Resources>
@@ -56,7 +56,7 @@
                         <!--Stackpanel for password TextBox-->
                         <StackPanel Orientation="Horizontal" Margin="10">
                             <iconPacks:PackIconMaterialDesign Kind="Lock" Width="35" Foreground="White"/>
-                            <TextBox Name="txtPassword" Margin="10 0" Width="200" BorderBrush="White" CaretBrush="#FFD94448" SelectionBrush="#FFD94448" >
+                            <TextBox Name="txtPassword" Margin="10 0" Width="200" Height="20" BorderBrush="White" CaretBrush="#FFD94448" SelectionBrush="#FFD94448" >
                                 <TextBox.Style>
                                     <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
                                         <Style.Resources>

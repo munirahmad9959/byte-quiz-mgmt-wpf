@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Data.SqlClient;
 using System.Windows;
+using System.Windows.Input;
 
 namespace ProjectQMSWpf
 {
@@ -67,7 +68,7 @@ namespace ProjectQMSWpf
         {
             using (SqlConnection connection = new SqlConnection(connectionString))
             {
-                string hashedPassword = HashPassword(newPassword);
+                string hashedPassword = newPassword;
                 string updateQuery = "UPDATE Users SET password = @Password, ResetToken = NULL, TokenExpiry = NULL WHERE ResetToken = @ResetToken";
                 SqlCommand updateCommand = new SqlCommand(updateQuery, connection);
                 updateCommand.Parameters.AddWithValue("@Password", hashedPassword);
@@ -78,10 +79,17 @@ namespace ProjectQMSWpf
             }
         }
 
-        private string HashPassword(string password)
+        private void CloseButton_Click(object sender, RoutedEventArgs e)
         {
-            // Placeholder for hashing password logic
-            return password; // Replace this with actual hash function, e.g., BCrypt
+            this.Close();
+        }
+
+        private void Window_MouseLeftButtonDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (e.ButtonState == MouseButtonState.Pressed)
+            {
+                this.DragMove();
+            }
         }
     }
 }

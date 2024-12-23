@@ -11,7 +11,8 @@
         Width="900" 
         WindowStyle="None" 
         AllowsTransparency="True"
-        Background="Transparent">
+        Background="Transparent"
+        MouseLeftButtonDown="Window_MouseLeftButtonDown" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis" />
     </Window.Resources>
